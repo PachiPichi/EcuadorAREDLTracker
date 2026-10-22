@@ -2,7 +2,7 @@ package com.pachi.aredl.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pachi.aredl.api.AredlApiClient;
-import com.pachi.aredl.model.CountryData;
+import com.pachi.aredl.model.country.CountryData;
 
 import java.io.IOException;
 

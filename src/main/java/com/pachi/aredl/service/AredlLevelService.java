@@ -3,7 +3,7 @@ package com.pachi.aredl.service;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pachi.aredl.api.AredlApiClient;
-import com.pachi.aredl.model.Level;
+import com.pachi.aredl.model.level.Level;
 
 import java.io.IOException;
 import java.util.List;

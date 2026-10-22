@@ -1,4 +1,4 @@
-package com.pachi.aredl.model;
+package com.pachi.aredl.model.level;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;

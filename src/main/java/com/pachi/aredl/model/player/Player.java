@@ -1,5 +1,4 @@
-package com.pachi.aredl.model;
-
+package com.pachi.aredl.model.player;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
@@ -10,10 +9,12 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class CountryRank {
+public class Player {
 
-    private Integer rank;
-    private Integer extremes_rank;
-    private Integer level_points;
-    private Integer extremes;
+    private String id;
+    private String username;
+
+    private String global_name;
+    private String discord_id;
+    private String discord_avatar;
 }

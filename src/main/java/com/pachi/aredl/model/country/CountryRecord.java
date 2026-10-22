@@ -1,7 +1,9 @@
-package com.pachi.aredl.model;
+package com.pachi.aredl.model.country;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.pachi.aredl.model.level.Level;
+import com.pachi.aredl.model.player.Player;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

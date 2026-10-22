@@ -1,39 +1,56 @@
 package com.pachi.aredl;
 
-import com.pachi.aredl.model.CountryData;
+import com.pachi.aredl.model.country.CountryData;
+import com.pachi.aredl.model.level.TrackedLevel;
 import com.pachi.aredl.service.CountryService;
+import com.pachi.aredl.service.TrackerService;
 
 import java.io.IOException;
+import java.util.List;
 
 public class Main {
 
     public static void main(String[] args) {
-        CountryService service = new CountryService();
+        TrackerService trackerService = new TrackerService();
 
         try {
-            CountryData data = service.getCountryData();
+            List<TrackedLevel> levels =
+                    trackerService.getTrackedLevels();
 
-            System.out.println("Clasificación: " + data.getRank().getRank());
-            System.out.println("Records recibidos: "
-                    + data.getRecords().size());
+            long completedCount = levels.stream()
+                    .filter(TrackedLevel::isCompleted)
+                    .count();
+
+            long pendingCount = levels.size() - completedCount;
+
+            System.out.println("=== Ecuador AREDL Tracker ===");
+            System.out.println("Total de niveles: " + levels.size());
+            System.out.println("Completados: " + completedCount);
+            System.out.println("Pendientes: " + pendingCount);
             System.out.println();
 
-            data.getRecords().stream()
-                    .limit(10)
-                    .forEach(record -> {
-                        String levelName = record.getLevel() != null
-                                ? record.getLevel().getName()
-                                : "Nivel desconocido";
+            System.out.println("=== TOP 1500 a 1530 ===");
 
-                        String playerName = record.getSubmittedBy() != null
-                                ? record.getSubmittedBy().getGlobal_name()
-                                : "Jugador desconocido";
+            levels.stream()
+                    .skip(1500)
+                    .limit(30)
+                    .forEach(trackedLevel -> {
+                        var level = trackedLevel.getLevel();
+
+                        String dlecPosition =
+                                trackedLevel.getDlecPosition() != null
+                                        ? trackedLevel.getDlecPosition().toString()
+                                        : "-";
 
                         System.out.printf(
-                                "Nivel: %s | Jugador: %s | Completados: %s%n",
-                                levelName,
-                                playerName,
-                                record.getCompletionCount()
+                                "AREDL #%s | Ecuador #%s | %s | Tier: %s | %s%n",
+                                level.getPosition(),
+                                dlecPosition,
+                                level.getName(),
+                                level.getNlwTier(),
+                                trackedLevel.isCompleted()
+                                        ? "COMPLETADO"
+                                        : "PENDIENTE"
                         );
                     });
         } catch (IOException e) {
