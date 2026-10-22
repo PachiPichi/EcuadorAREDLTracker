@@ -1,33 +1,41 @@
 package com.pachi.aredl;
 
-import com.pachi.aredl.api.AredlApiClient;
-import com.pachi.aredl.model.Level;
-import com.pachi.aredl.service.AredlLevelService;
+import com.pachi.aredl.model.CountryData;
+import com.pachi.aredl.service.CountryService;
 
 import java.io.IOException;
-import java.util.List;
 
 public class Main {
 
     public static void main(String[] args) {
-        AredlLevelService service = new AredlLevelService();
+        CountryService service = new CountryService();
 
         try {
-            List<Level> levels = service.getAllLevels();
+            CountryData data = service.getCountryData();
 
-            System.out.println("Niveles recibidos: " + levels.size());
+            System.out.println("Clasificación: " + data.getRank().getRank());
+            System.out.println("Records recibidos: "
+                    + data.getRecords().size());
             System.out.println();
 
-            levels.stream()
+            data.getRecords().stream()
                     .limit(10)
-                    .forEach(level ->
-                            System.out.printf(
-                                    "Posición: %s | Nombre: %s | Tier NLW: %s%n",
-                                    level.getPosition(),
-                                    level.getName(),
-                                    level.getNlwTier()
-                            )
-                    );
+                    .forEach(record -> {
+                        String levelName = record.getLevel() != null
+                                ? record.getLevel().getName()
+                                : "Nivel desconocido";
+
+                        String playerName = record.getSubmittedBy() != null
+                                ? record.getSubmittedBy().getGlobal_name()
+                                : "Jugador desconocido";
+
+                        System.out.printf(
+                                "Nivel: %s | Jugador: %s | Completados: %s%n",
+                                levelName,
+                                playerName,
+                                record.getCompletionCount()
+                        );
+                    });
         } catch (IOException e) {
 
             System.err.println(

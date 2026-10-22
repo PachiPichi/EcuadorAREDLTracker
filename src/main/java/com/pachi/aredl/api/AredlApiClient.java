@@ -12,6 +12,8 @@ public class AredlApiClient {
 
     private static final String BASE_URL =
             "https://api.aredl.net/v2";
+    private static final String COUNTRY_CODE =
+            "218";
 
     private final HttpClient httpClient;
 
@@ -20,6 +22,27 @@ public class AredlApiClient {
                 .connectTimeout(Duration.ofSeconds(10))
                 .followRedirects(HttpClient.Redirect.NORMAL)
                 .build();
+    }
+
+    public String getCountryRecordsJson()
+        throws IOException, InterruptedException {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(BASE_URL + "/api/aredl/country/" + COUNTRY_CODE))
+                .timeout(Duration.ofSeconds(30))
+                .header("Accept", "application/json")
+                .GET()
+                .build();
+
+        HttpResponse<String> response = httpClient.send(
+                request,
+                HttpResponse.BodyHandlers.ofString()
+        );
+
+        if (response.statusCode() != 200) {
+            throw new RuntimeException("Error al obtener records del país. Código HTTP: "
+                    + response.statusCode());
+        }
+        return response.body();
     }
 
     public String getLevelsJson()
