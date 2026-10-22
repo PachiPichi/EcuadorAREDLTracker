@@ -12,8 +12,7 @@ public class AredlApiClient {
 
     private static final String BASE_URL =
             "https://api.aredl.net/v2";
-    private static final String COUNTRY_CODE =
-            "218";
+    private static final String COUNTRY_CODE = "218";
 
     private final HttpClient httpClient;
 
@@ -24,32 +23,11 @@ public class AredlApiClient {
                 .build();
     }
 
-    public String getCountryRecordsJson()
-        throws IOException, InterruptedException {
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(BASE_URL + "/api/aredl/country/" + COUNTRY_CODE))
-                .timeout(Duration.ofSeconds(30))
-                .header("Accept", "application/json")
-                .GET()
-                .build();
-
-        HttpResponse<String> response = httpClient.send(
-                request,
-                HttpResponse.BodyHandlers.ofString()
-        );
-
-        if (response.statusCode() != 200) {
-            throw new RuntimeException("Error al obtener records del país. Código HTTP: "
-                    + response.statusCode());
-        }
-        return response.body();
-    }
-
-    public String getLevelsJson()
+    private String getJson(String endpoint)
             throws IOException, InterruptedException {
 
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(BASE_URL + "/api/aredl/levels"))
+                .uri(URI.create(BASE_URL + endpoint))
                 .timeout(Duration.ofSeconds(30))
                 .header("Accept", "application/json")
                 .GET()
@@ -62,11 +40,36 @@ public class AredlApiClient {
 
         if (response.statusCode() != 200) {
             throw new IOException(
-                    "Error de AREDL. Código HTTP: "
+                    "Error al consultar AREDL. Endpoint: "
+                            + endpoint
+                            + ". Código HTTP: "
                             + response.statusCode()
             );
         }
 
         return response.body();
+    }
+
+    public String getLevelsJson()
+            throws IOException, InterruptedException {
+
+        return getJson("/api/aredl/levels");
+    }
+
+    public String getCountryRecordsJson()
+            throws IOException, InterruptedException {
+
+        return getJson(
+                "/api/aredl/country/" + COUNTRY_CODE
+        );
+    }
+
+    public String getLevelRecordsJson(String levelId)
+            throws IOException, InterruptedException {
+
+        return getJson(
+                "/api/aredl/country/" + COUNTRY_CODE
+                        + "/levels/" + levelId + "/records"
+        );
     }
 }

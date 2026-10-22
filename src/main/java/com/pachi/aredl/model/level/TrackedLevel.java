@@ -6,16 +6,23 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class TrackedLevel {
+
     private Level level;
-    private CountryRecord firstVictor;
+    private List<CountryRecord> records;
     private Integer dlecPosition;
 
     public boolean isCompleted(){
-        return firstVictor != null;
+        return records != null && !records.isEmpty();
+    }
+
+    public CountryRecord getFirstRecord(){
+        return isCompleted() ? records.get(0) : null;
     }
 }

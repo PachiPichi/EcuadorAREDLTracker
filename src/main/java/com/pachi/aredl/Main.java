@@ -1,11 +1,10 @@
 package com.pachi.aredl;
 
-import com.pachi.aredl.model.country.CountryData;
 import com.pachi.aredl.model.level.TrackedLevel;
-import com.pachi.aredl.service.CountryService;
 import com.pachi.aredl.service.TrackerService;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Main {
@@ -52,6 +51,26 @@ public class Main {
                                         ? "COMPLETADO"
                                         : "PENDIENTE"
                         );
+                        if (trackedLevel.getRecords() != null
+                                && trackedLevel.getRecords().size() > 1){
+                            List<String> victors = new ArrayList<>();
+                            for (var record : trackedLevel.getRecords()) {
+                                var player = record.getSubmittedBy();
+
+                                if (player != null) {
+                                    String name = player.getGlobal_name();
+
+                                    if (name == null || name.isBlank()) {
+                                        name = player.getUsername();
+                                    }
+
+                                    if (name != null && !name.isBlank()) {
+                                        victors.add(name);
+                                    }
+                                }
+                            }
+                            System.out.println("Nivel con varios victors, que se lo pasaron: " + victors);
+                        }
                     });
         } catch (IOException e) {
 
