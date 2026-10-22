@@ -23,6 +23,6 @@ public class TrackedLevel {
     }
 
     public CountryRecord getFirstRecord(){
-        return isCompleted() ? records.get(0) : null;
+        return isCompleted() ? records.getFirst() : null;
     }
 }

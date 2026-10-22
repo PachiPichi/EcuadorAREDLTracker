@@ -31,7 +31,7 @@ public class CountryService {
 
         return objectMapper.readValue(
                 json,
-                new TypeReference<List<CountryRecord>>() {}
+                new TypeReference<>() {}
         );
     }
 }
