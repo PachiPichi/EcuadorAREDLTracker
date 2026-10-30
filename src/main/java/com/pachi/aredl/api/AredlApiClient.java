@@ -6,6 +6,8 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.Duration;
 
 public class AredlApiClient {
@@ -23,8 +25,19 @@ public class AredlApiClient {
                 .build();
     }
 
-    private String getJson(String endpoint)
+    private String getJson(String endpoint, boolean useCacheFirst)
             throws IOException, InterruptedException {
+
+        Path cacheFile = Path.of(
+                "data",
+                "cache",
+                "api",
+                endpoint.replaceAll("[^a-zA-Z0-9._-]", "_") + ".json"
+        );
+
+        if (useCacheFirst && Files.exists(cacheFile)) {
+            return Files.readString(cacheFile);
+        }
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URL + endpoint))
@@ -33,34 +46,54 @@ public class AredlApiClient {
                 .GET()
                 .build();
 
-        HttpResponse<String> response = httpClient.send(
+        HttpResponse<String> response;
+
+        try {
+
+         response = httpClient.send(
                 request,
                 HttpResponse.BodyHandlers.ofString()
         );
+        } catch (IOException e) {
+            if (Files.exists(cacheFile)) {
+                return Files.readString(cacheFile);
+            }
+
+            throw e;
+        }
 
         if (response.statusCode() != 200) {
+            if (Files.exists(cacheFile)) {
+                return Files.readString(cacheFile);
+            }
+
             throw new IOException(
                     "Error al consultar AREDL. Endpoint: "
-                            + endpoint
-                            + ". Código HTTP: "
-                            + response.statusCode()
+                    + endpoint
+                    + ", Código HTTP: "
+                    + response.statusCode()
             );
         }
 
-        return response.body();
+        String json = response.body();
+
+        Files.createDirectories(cacheFile.getParent());
+        Files.writeString(cacheFile, json);
+
+        return json;
     }
 
     public String getLevelsJson()
             throws IOException, InterruptedException {
 
-        return getJson("/api/aredl/levels");
+        return getJson("/api/aredl/levels", false);
     }
 
     public String getCountryRecordsJson()
             throws IOException, InterruptedException {
 
         return getJson(
-                "/api/aredl/country/" + COUNTRY_CODE
+                "/api/aredl/country/" + COUNTRY_CODE, false
         );
     }
 
@@ -69,7 +102,7 @@ public class AredlApiClient {
 
         return getJson(
                 "/api/aredl/country/" + COUNTRY_CODE
-                        + "/levels/" + levelId + "/records"
+                        + "/levels/" + levelId + "/records", true
         );
     }
 }
