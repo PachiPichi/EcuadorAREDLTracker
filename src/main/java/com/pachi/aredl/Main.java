@@ -31,8 +31,8 @@ public class Main {
             System.out.println("=== TOP 1500 a 1530 ===");
 
             levels.stream()
-                    .skip(1500)
-                    .limit(30)
+                    .skip(1550)
+                    .limit(50)
                     .forEach(trackedLevel -> {
                         var level = trackedLevel.getLevel();
 
