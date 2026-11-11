@@ -15,8 +15,18 @@ public class TrackerService {
     private final CountryService countryService;
 
     public TrackerService(){
-        this.levelService = new AredlLevelService();
-        this.countryService = new CountryService();
+        this(
+                new AredlLevelService(),
+                new CountryService()
+        );
+    }
+
+    public TrackerService(
+            AredlLevelService levelService,
+            CountryService countryService
+    ){
+        this.levelService = levelService;
+        this.countryService = countryService;
     }
 
     public List<TrackedLevel> getTrackedLevels()
@@ -44,7 +54,8 @@ public class TrackerService {
                 throw e;
             }
 
-            System.out.println("No se pudieron recuperar niveles de cache");
+            System.out.println("No se pudieron descargar los niveles actuales. "
+            + "Se utilizarán los niveles de caché.");
 
             freshLevels = false;
         }
