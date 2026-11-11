@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pachi.aredl.model.TrackerResult;
 import com.pachi.aredl.model.country.CountryRecord;
 import com.pachi.aredl.model.export.LevelExport;
+import com.pachi.aredl.model.export.NewRecordsExport;
 import com.pachi.aredl.model.export.SummaryExport;
 import com.pachi.aredl.model.export.VictorExport;
 import com.pachi.aredl.model.level.TrackedLevel;
@@ -13,6 +14,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.time.Instant;
 import java.util.List;
 
 public class JsonExportService {
@@ -30,6 +32,15 @@ public class JsonExportService {
     }
 
     public void export(TrackerResult result) throws IOException {
+        NewRecordsExport emptyExport = new NewRecordsExport(
+                Instant.now().toString(),
+                List.of()
+        );
+
+        export(result, emptyExport);
+    }
+
+    public void export(TrackerResult result, NewRecordsExport newRecordsExport) throws IOException {
 
         List<TrackedLevel> levels = result.getTrackedLevels();
 
@@ -52,13 +63,14 @@ public class JsonExportService {
         );
 
         List<LevelExport> levelsExport = levels.stream()
-                        .map(this::toLevelExport)
-                                .toList();
+                .map(this::toLevelExport)
+                .toList();
 
         Files.createDirectories(outputDirectory);
 
         writeJsonAtomically("summary.json", summary);
         writeJsonAtomically("levels.json", levelsExport);
+        writeJsonAtomically("new-records.json", newRecordsExport);
     }
 
 

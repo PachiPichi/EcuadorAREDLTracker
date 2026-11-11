@@ -1,11 +1,16 @@
 package com.pachi.aredl;
 
 import com.pachi.aredl.model.TrackerResult;
+import com.pachi.aredl.model.changelog.ChangelogDocument;
+import com.pachi.aredl.model.export.NewRecordsExport;
 import com.pachi.aredl.model.level.TrackedLevel;
+import com.pachi.aredl.service.ChangelogProcessor;
+import com.pachi.aredl.service.ChangelogService;
 import com.pachi.aredl.service.JsonExportService;
 import com.pachi.aredl.service.TrackerService;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,12 +19,35 @@ public class Main {
     static void main() {
         TrackerService trackerService = new TrackerService();
         JsonExportService jsonExportService = new JsonExportService();
+        ChangelogService changelogService = new ChangelogService();
+        ChangelogProcessor changelogProcessor = new ChangelogProcessor();
 
         try {
             TrackerResult result = trackerService.getTrackerResult();
 
-            jsonExportService.export(result);
+            // 1. Cargar el historial anterior.
+            ChangelogDocument changelogDocument = changelogService.load();
+
+            // 2. Detectar los nuevos records y reconstruir los eventos.
+            var newEvents = changelogProcessor.process(
+                    changelogDocument,
+                    result
+            );
+
+            // 3. Preparar la exportación de novedades.
+            NewRecordsExport newRecordsExport = new NewRecordsExport(
+                    Instant.now().toString(),
+                    newEvents
+            );
+
+            // 4. Exportar JSON de frontend
+            jsonExportService.export(result,  newRecordsExport);
+
+            // 5. Guardar changelog permanente
+            changelogService.save(changelogDocument);
+
             System.out.println("Datos exportados correctamente");
+            System.out.println("Nuevos records detectados: " + newEvents.size());
 
             List<TrackedLevel> levels =
                     result.getTrackedLevels();
