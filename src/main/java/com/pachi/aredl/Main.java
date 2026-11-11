@@ -1,6 +1,8 @@
 package com.pachi.aredl;
 
+import com.pachi.aredl.model.TrackerResult;
 import com.pachi.aredl.model.level.TrackedLevel;
+import com.pachi.aredl.service.JsonExportService;
 import com.pachi.aredl.service.TrackerService;
 
 import java.io.IOException;
@@ -11,10 +13,16 @@ public class Main {
 
     static void main() {
         TrackerService trackerService = new TrackerService();
+        JsonExportService jsonExportService = new JsonExportService();
 
         try {
+            TrackerResult result = trackerService.getTrackerResult();
+
+            jsonExportService.export(result);
+            System.out.println("Datos exportados correctamente");
+
             List<TrackedLevel> levels =
-                    trackerService.getTrackedLevels();
+                    result.getTrackedLevels();
 
             long completedCount = levels.stream()
                     .filter(TrackedLevel::isCompleted)
@@ -78,6 +86,7 @@ public class Main {
                     "No se pudo obtener la respuesta de AREDL: "
                             + e.getMessage()
             );
+            e.printStackTrace();
 
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();

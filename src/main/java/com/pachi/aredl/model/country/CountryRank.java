@@ -2,6 +2,7 @@ package com.pachi.aredl.model.country;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,7 +14,11 @@ import lombok.Setter;
 public class CountryRank {
 
     private Integer rank;
-    private Integer extremes_rank;
-    private Integer level_points;
+
+    @JsonProperty("extremes_rank")
+    private Integer extremesRank;
+
+    @JsonProperty("level_points")
+    private Integer levelPoints;
     private Integer extremes;
 }

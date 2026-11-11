@@ -1,5 +1,6 @@
 package com.pachi.aredl.service;
 
+import com.pachi.aredl.model.TrackerResult;
 import com.pachi.aredl.model.country.CountryData;
 import com.pachi.aredl.model.country.CountryRecord;
 import com.pachi.aredl.model.level.Level;
@@ -29,7 +30,7 @@ public class TrackerService {
         this.countryService = countryService;
     }
 
-    public List<TrackedLevel> getTrackedLevels()
+    public TrackerResult getTrackerResult()
             throws IOException, InterruptedException{
 
         List<Level> levels;
@@ -246,7 +247,16 @@ public class TrackerService {
             }
         }
 
-        return trackedLevels;
+        return new TrackerResult(
+                currentCountryData.getRank(),
+                trackedLevels
+        );
+    }
+
+    public List<TrackedLevel> getTrackedLevels()
+            throws IOException, InterruptedException {
+
+        return getTrackerResult().getTrackedLevels();
     }
 
     private Map<String, CountryRecord> getFirstVictorsByLevel(
