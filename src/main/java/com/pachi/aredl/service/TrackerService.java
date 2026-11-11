@@ -56,7 +56,7 @@ public class TrackerService {
         CountryData previousCountryData = null;
 
         try {
-            previousCountryData = countryService.fetchCountryData();
+            previousCountryData = countryService.getCatchedCountryData();
         } catch (IOException e) {
             System.out.println(
                     "La caché del país no es válida, "
