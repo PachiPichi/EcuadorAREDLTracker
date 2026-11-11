@@ -34,7 +34,8 @@ public class AredlLevelService {
 
         return objectMapper.readValue(
                 json,
-                new TypeReference<List<Level>>(){}
+                new TypeReference<>() {
+                }
         );
     }
 
@@ -46,7 +47,7 @@ public class AredlLevelService {
 
         List<Level> levels = objectMapper.readValue(
                 json,
-                new TypeReference<List<Level>>() {
+                new TypeReference<>() {
                 }
         );
 

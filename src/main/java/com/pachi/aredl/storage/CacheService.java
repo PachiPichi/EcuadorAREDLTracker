@@ -15,6 +15,7 @@ public class CacheService {
         this.cacheDirectory = Path.of("data", "cache", "api");
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean exists(String fileName) {
         return Files.exists(getCachePath(fileName));
     }
@@ -44,6 +45,10 @@ public class CacheService {
     }
 
     public void writeJson(String fileName, String json) throws IOException {
+
+        if (json.isBlank()) {
+            throw new IOException("No se puede guardar un json vacío.");
+        }
         Path path = getCachePath(fileName);
 
         Files.createDirectories(path.getParent());

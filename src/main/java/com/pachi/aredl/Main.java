@@ -9,7 +9,7 @@ import java.util.List;
 
 public class Main {
 
-    static void main(String[] args) {
+    static void main() {
         TrackerService trackerService = new TrackerService();
 
         try {
